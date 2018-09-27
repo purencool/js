@@ -6,6 +6,7 @@
 const canvas = document.querySelector('canvas');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
+const canvasObj = canvas.getContext('2d');
 
 window.addEventListener('mousemove', function (e) {
   param.x = e.x;
@@ -29,8 +30,6 @@ window.addEventListener('mouseout', function (e) {
   }
 });
 
-// Attaching canvas to global object
-const canvasObj = canvas.getContext('2d');
 
 
 
@@ -45,8 +44,6 @@ const param = {
   numberOffCircles: 600,
   circleArr : [],
 }
-
-
 
 
 
@@ -77,7 +74,6 @@ function Circles(x, y, radius, dx, dy, color = '#000000', angle = 0, circum = Ma
 
   this.draw = function (clear = true) {
     canvasObj.beginPath();
-    canvasObj.arc
     canvasObj.arc(this.x, this.y, this.radius, this.angle, this.circum, false);
     canvasObj.strokeStyle = this.color;
     canvasObj.stroke();
@@ -122,17 +118,6 @@ function Circles(x, y, radius, dx, dy, color = '#000000', angle = 0, circum = Ma
 
 
 
-/**
- *  Animation object
- */
-function animateClass() {
-  requestAnimationFrame(animateClass);
-  canvasObj.clearRect(0, 0, innerWidth, innerHeight);
-  for (let i = 0; i < param.circleArr.length; i++) {
-   param.circleArr[i].update();
-  }
-
-}
 
 
 /**
@@ -150,10 +135,26 @@ function init() {
 
     param.circleArr.push(new Circles(x, y, radius, dx, dy, color, angle));
   }
+
+
+  /**
+ *  Animation object
+ */
+ function animateClass() {
+  requestAnimationFrame(animateClass);
+  canvasObj.clearRect(0, 0, innerWidth, innerHeight);
+  for (let i = 0; i < param.circleArr.length; i++) {
+   param.circleArr[i].update();
+  }
+
+}
+
+
+  animateClass();
 }
 
 init();
-animateClass();
+
 
 
 
