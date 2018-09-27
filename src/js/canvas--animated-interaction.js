@@ -32,21 +32,6 @@ window.addEventListener('mouseout', function (e) {
 
 
 
-
-/**
- *  Parameters
- */
-const param = {
-  x: undefined,
-  y: undefined,
-  maxCircleSize: 9,
-  minCircleSize: 3,
-  numberOffCircles: 600,
-  circleArr : [],
-}
-
-
-
 /**
  *  Circle class
  * @param {*} x 
@@ -72,7 +57,10 @@ function Circles(x, y, radius, dx, dy, color = '#000000', angle = 0, circum = Ma
   this.circum = circum
 
 
-  this.draw = function (clear = true) {
+  /**
+   *  Draw circles
+   */
+  this.draw = function () {
     canvasObj.beginPath();
     canvasObj.arc(this.x, this.y, this.radius, this.angle, this.circum, false);
     canvasObj.strokeStyle = this.color;
@@ -81,6 +69,9 @@ function Circles(x, y, radius, dx, dy, color = '#000000', angle = 0, circum = Ma
     canvasObj.fill();
   }
 
+  /**
+   *  Update movement of circles
+   */
   this.update = function () {
 
     // X animation
@@ -118,42 +109,77 @@ function Circles(x, y, radius, dx, dy, color = '#000000', angle = 0, circum = Ma
 
 
 
+/**
+ * 
+ * @param {*} param 
+ */
+function Init(param) {
+
+  /**
+   *  Parameters
+   */
+  this.param = param;
+
+  /**
+   *  Draw method
+   */
+  this.buildCircles = function () {
+    for (let i = 0; i < this.param.numberOffCircles; i++) {
+      let angle = 0;
+      let color = '#' + Math.floor(Math.random() * 16777215).toString(16);
+      let radius = Math.floor(Math.random() * (this.param.maxCircleSize - this.param.minCircleSize + 1)) + this.param.minCircleSize;
+      let x = Math.random() * (innerWidth - radius * 2) + radius;
+      let dx = (Math.random() - 0.5) * 4;
+      let y = Math.random() * (innerHeight - radius * 2) + radius;
+      let dy = (Math.random() - 0.5) * 4;
+
+      this.param.circleArr.push(new Circles(x, y, radius, dx, dy, color, angle));
+    }
+  }
+
+  /**
+   *  Animation method
+   */
+  this.animateClass = function () {
+    this.param = param;
+    function animateClass() {
+      requestAnimationFrame(animateClass);
+      canvasObj.clearRect(0, 0, innerWidth, innerHeight);
+      for (let i = 0; i < param.circleArr.length; i++) {
+        param.circleArr[i].update();
+      }
+    }
+    animateClass();
+  }
+
+  /**
+   * Run init class
+   */
+  this.run = function () {
+    init.buildCircles();
+    init.animateClass();
+  }
+}
+
+
 
 
 /**
- *  Starter object
+ *  Parameters
  */
-function init() {
-  for (let i = 0; i < param.numberOffCircles; i++) {
-    let angle = 0;
-    let color = '#' + Math.floor(Math.random() * 16777215).toString(16);
-    let radius = Math.floor(Math.random() * (param.maxCircleSize - param.minCircleSize + 1)) + param.minCircleSize;
-    let x = Math.random() * (innerWidth - radius * 2) + radius;
-    let dx = (Math.random() - 0.5) * 4;
-    let y = Math.random() * (innerHeight - radius * 2) + radius;
-    let dy = (Math.random() - 0.5) * 4;
-
-    param.circleArr.push(new Circles(x, y, radius, dx, dy, color, angle));
-  }
-
-
-  /**
- *  Animation object
- */
- function animateClass() {
-  requestAnimationFrame(animateClass);
-  canvasObj.clearRect(0, 0, innerWidth, innerHeight);
-  for (let i = 0; i < param.circleArr.length; i++) {
-   param.circleArr[i].update();
-  }
-
+const param = {
+  x: undefined,
+  y: undefined,
+  maxCircleSize: 9,
+  minCircleSize: 3,
+  numberOffCircles: 600,
+  circleArr: [],
 }
 
 
-  animateClass();
-}
+const init = new Init(param);
+init.run();
 
-init();
 
 
 
